@@ -19,7 +19,9 @@ References
 
 """
 
+from data_containers import generate_date_list
 from data_containers import get_data
+from data_containers import stat_categories
 
 # Example API calls
 # url = 'https://fantasysports.yahooapis.com/fantasy/v2/league/386.l.74973/'
@@ -31,6 +33,21 @@ def bombay_wrapper():
     """
     """
 
-    url = 'https://fantasysports.yahooapis.com/fantasy/v2/league/386.l.74973/'
-    data = get_data(url)
-    print(data)
+    stat_category_dict = stat_categories()
+    date_list = generate_date_list()
+
+    stats = []
+    for date in date_list:
+        url = '/team/386.l.74973.t.1/stats;type=date;date={}'.format(date)
+        data = get_data(url)
+        team_stats = data['team']['team_stats']['stats']['stat']
+        for stat in team_stats:
+            if stat['stat_id'] == stat_category_dict['Goals']:
+                stats.append(stat['value'])
+
+    print(stats)
+
+
+if __name__ == '__main__':
+
+    bombay_wrapper()
