@@ -11,16 +11,23 @@ Authors
 Use
 ---
 
+    Coming soon!
+
 Dependencies
 ------------
+
+    - ``yahoo_oauth``
 
 References
 ----------
 
+    - ``https://developer.yahoo.com/apps/``
+    - ``https://developer.yahoo.com/fantasysports/guide/``
 """
 
 from data_containers import generate_date_list
 from data_containers import get_data
+from data_containers import get_time_series_stat
 from data_containers import stat_categories
 
 # Example API calls
@@ -29,22 +36,38 @@ from data_containers import stat_categories
 # url = 'https://fantasysports.yahooapis.com/fantasy/v2/league/386.l.74973/scoreboard/'
 # url = 'https://fantasysports.yahooapis.com/fantasy/v2/team/386.l.74973.t.1/'
 
+
+def clean_data(data):
+    """Return the list of data, replacing dashes with zeros.
+
+    Parameters
+    ----------
+    data : list or str
+        The data to be cleaned
+
+    Returns
+    -------
+    cleaned_data : list of str
+        The data with dashes replaced with zeros
+    """
+
+    cleaned_data = []
+    for item in data:
+        if item == '-':
+            cleaned_data.append(item.replace('-', '0'))
+        else:
+            cleaned_data.append(item)
+
+    return cleaned_data
+
+
 def bombay_wrapper():
+    """The main function of the ``bombay_wrapper`` module.  See module
+    docstring for further details.
     """
-    """
 
-    stat_category_dict = stat_categories()
-    date_list = generate_date_list()
-
-    stats = []
-    for date in date_list:
-        url = '/team/386.l.74973.t.1/stats;type=date;date={}'.format(date)
-        data = get_data(url)
-        team_stats = data['team']['team_stats']['stats']['stat']
-        for stat in team_stats:
-            if stat['stat_id'] == stat_category_dict['Goals']:
-                stats.append(stat['value'])
-
+    stats = get_time_series_stat('Goals', 1, '2019-01-01', '2019-01-30')
+    stats = clean_data(stats)
     print(stats)
 
 
