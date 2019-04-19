@@ -9,7 +9,7 @@ import xmltodict
 from oauth import SESSION
 
 
-def generate_date_list(begin, end):
+def generate_date_list(begin, end, return_type='str'):
     """
     """
 
@@ -21,17 +21,27 @@ def generate_date_list(begin, end):
     date_list = []
     for i in range((end - begin).days + 1):
         date_list.append(begin + datetime.timedelta(i))
-    date_list = [str(date) for date in date_list]
+
+    if return_type == 'datetime':
+        pass
+
+    elif return_type == 'str':
+        date_list = [str(date) for date in date_list]
+        date_list = [date.split()[0] for date in date_list]
+
+    else:
+        raise NotImplementedError('Unsupported return_type: {}'.format(return_type))
 
     return date_list
 
 
-def get_data(url):
+def get_data(url, verbose=False):
     """
     """
 
     full_url = 'https://fantasysports.yahooapis.com/fantasy/v2' + url
-    print('Getting data from {}'.format(full_url))
+    if verbose:
+        print('Getting data from {}'.format(full_url))
 
     # Get data from the Yahoo API
     data = SESSION.session.get(full_url)
@@ -55,7 +65,7 @@ def get_league_data():
     return data['league']
 
 
-def get_time_series_stat(category, team, begin, end):
+def get_time_series_stat(category, team, begin, end, verbose=False):
     """Return a dictionary of stats for the given category, team, and
     time period.
 
@@ -68,7 +78,9 @@ def get_time_series_stat(category, team, begin, end):
     begin : str
         The begin date in ``YYYY-MM-DD`` format (e.g. ``2019-01-01``)
     end : str
-        The begin date in ``YYYY-MM-DD`` format (e.g. ``2019-01-01``)
+        The begin date in ``YYYY-MM-DD`` format (e.g. ``2019-01-31``)
+    verbose : bool
+        Enable/disable standard output
     """
 
     # Gather needed data
@@ -79,7 +91,7 @@ def get_time_series_stat(category, team, begin, end):
     stats = []
     for date in date_list:
         url = '/team/386.l.74973.t.{}/stats;type=date;date={}'.format(team, date)
-        data = get_data(url)
+        data = get_data(url, verbose)
         team_stats = data['team']['team_stats']['stats']['stat']
         for stat in team_stats:
             if stat['stat_id'] == stat_category_dict[category]:
