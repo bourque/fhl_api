@@ -52,7 +52,7 @@ def get_data(url, verbose=False):
     data = json.dumps(data, indent=2)
     data = json.loads(data)
 
-    return data['fantasy_content']
+    return data
 
 
 def get_league_data():
@@ -62,7 +62,17 @@ def get_league_data():
     url = '/league/386.l.74973/'
     data = get_data(url)
 
-    return data['league']
+    return data['fantasy_content']['league']
+
+
+def get_team_data(team):
+    """
+    """
+
+    url = '/team/386.l.74973.t.{}/'.format(team)
+    data = get_data(url)
+
+    return data['fantasy_content']['team']
 
 
 def get_time_series_stat(category, team, begin, end, verbose=False):
@@ -91,7 +101,7 @@ def get_time_series_stat(category, team, begin, end, verbose=False):
     stats = []
     for date in date_list:
         url = '/team/386.l.74973.t.{}/stats;type=date;date={}'.format(team, date)
-        data = get_data(url, verbose)
+        data = get_data(url, verbose)['fantasy_content']
         team_stats = data['team']['team_stats']['stats']['stat']
         for stat in team_stats:
             if stat['stat_id'] == stat_category_dict[category]:
@@ -107,7 +117,7 @@ def stat_categories():
     url = '/league/386.l.74973/settings'
     data = get_data(url)
 
-    stat_category_data = data['league']['settings']['stat_categories']['stats']['stat']
+    stat_category_data = data['fantasy_content']['league']['settings']['stat_categories']['stats']['stat']
     stat_categories = {}
     for stat in stat_category_data:
         stat_categories[stat['name']] = stat['stat_id']
