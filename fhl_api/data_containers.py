@@ -14,8 +14,8 @@ def generate_date_list(begin, end):
     """
 
     # Convert string inputs to datetime
-    begin = datetime.datetime.strptime(begin, '%Y-%M-%d')
-    end = datetime.datetime.strptime(end, '%Y-%M-%d')
+    begin = datetime.datetime.strptime(begin, '%Y-%m-%d')
+    end = datetime.datetime.strptime(end, '%Y-%m-%d')
 
     # Generate date list
     date_list = []
@@ -43,6 +43,16 @@ def get_data(url):
     data = json.loads(data)
 
     return data['fantasy_content']
+
+
+def get_league_data():
+    """
+    """
+
+    url = '/league/386.l.74973/'
+    data = get_data(url)
+
+    return data['league']
 
 
 def get_time_series_stat(category, team, begin, end):

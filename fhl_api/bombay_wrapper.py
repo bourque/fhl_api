@@ -25,8 +25,10 @@ References
     - ``https://developer.yahoo.com/fantasysports/guide/``
 """
 
+from constants import SEASONS
 from data_containers import generate_date_list
 from data_containers import get_data
+from data_containers import get_league_data
 from data_containers import get_time_series_stat
 from data_containers import stat_categories
 
@@ -66,10 +68,12 @@ def bombay_wrapper():
     docstring for further details.
     """
 
-    stats = get_time_series_stat('Goals', 1, '2019-01-01', '2019-01-30')
-    stats = clean_data(stats)
-    print(stats)
-
+    num_teams = int(get_league_data()['num_teams'])
+    for team in range(1, num_teams + 1):
+        stats = get_time_series_stat('Goals', team, SEASONS['2018']['regular_season_begin'], SEASONS['2018']['regular_season_end'])
+        stats = clean_data(stats)
+        print(team)
+        print(stats)
 
 if __name__ == '__main__':
 
